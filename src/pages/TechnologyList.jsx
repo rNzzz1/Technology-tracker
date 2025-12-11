@@ -11,6 +11,8 @@ import Modal from '../components/Modal/Modal'
 import AddTechnologyForm from '../components/AddTechnologyForm/AddTechnologyForm'
 import QuickActions from '../components/QuickActions'
 import RoadmapImporter from '../components/RoadmapImporter'
+import TechnologySearch from '../components/TechnologySearch'
+
 
 function TechnologyList() {
   const {
@@ -23,14 +25,19 @@ function TechnologyList() {
     resetAllStatuses,
     exportData,
     importData
+    
   } = useTechnologies()
 
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [apiSearchResults, setApiSearchResults] = useState([])
+
 
   const navigate = useNavigate()
 
+
+  
   // API-хук для первичной загрузки (используем только состояния)
   const {
     technologies: apiTechnologies,
@@ -83,6 +90,15 @@ function TechnologyList() {
       })
     })
   }
+  const handleRandomSelect = () => {
+    if (technologies.length === 0) return
+  
+    const randomIndex = Math.floor(Math.random() * technologies.length)
+    const randomTech = technologies[randomIndex]
+  
+    // например, просто перейти на страницу технологии
+    navigate(`/technology/${randomTech.id}`)
+  }
   
 
   return (
@@ -118,12 +134,21 @@ function TechnologyList() {
       {/* Импорт дорожной карты */}
       <RoadmapImporter onImportTechnologies={handleImportRoadmap} />
 
-      <SearchBar
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        resultsCount={filteredTechnologies.length}
-        totalCount={technologies.length}
-      />
+      <TechnologySearch onResults={setApiSearchResults} />
+
+        {apiSearchResults.length > 0 && (
+        <div className="api-search-results">
+            <h3>Результаты поиска из API: {apiSearchResults.length}</h3>
+            <ul>
+            {apiSearchResults.map(tech => (
+                <li key={tech.id}>
+                <strong>{tech.title}</strong> — {tech.category}
+                </li>
+            ))}
+            </ul>
+        </div>
+        )}
+
 
       <FilterButtons
         activeFilter={activeFilter}
@@ -131,14 +156,15 @@ function TechnologyList() {
         technologies={technologies}
       />
 
-      <QuickActions
-        onMarkAllCompleted={markAllAsCompleted}
-        onResetAll={resetAllStatuses}
-        onRandomSelect={() => {}}
-        technologies={technologies}
-        exportData={exportData}
-        importData={importData}
-      />
+<QuickActions
+  onMarkAllCompleted={markAllAsCompleted}
+  onResetAll={resetAllStatuses}
+  onRandomSelect={handleRandomSelect}
+  technologies={technologies}
+  exportData={exportData}
+  importData={importData}
+/>
+
 
       <div className="technology-list">
         {filteredTechnologies.map(tech => (
