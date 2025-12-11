@@ -39,6 +39,25 @@ function Navigation({ isLoggedIn, username, onLogout }) {
             Дашборд
           </Link>
         </li>
+        <li>
+        <Link
+          to="/stats"
+          className={isActive('/stats') ? 'active' : ''}
+        >
+          Статистика
+        </Link>
+      </li>
+      
+      <li>
+      <Link
+        to="/settings"
+        className={isActive('/settings') ? 'active' : ''}
+      >
+        Настройки
+      </Link>
+     </li>
+
+
       </ul>
 
       <div className="nav-user">
@@ -57,6 +76,7 @@ function Navigation({ isLoggedIn, username, onLogout }) {
       </div>
     </nav>
   )
+  
 }
 
 export default Navigation

@@ -8,6 +8,10 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Navigation from './components/Navigation'
 import ProtectedRoute from './components/ProtectedRoute'
+import Stats from './pages/Stats'
+import Settings from './pages/Settings'
+
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -41,6 +45,8 @@ function App() {
       />
 
       <Routes>
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/stats" element={<Stats />} />
         <Route path="/" element={<Home />} />
         <Route path="/Technology-tracker/" element={<Home />} />
 
