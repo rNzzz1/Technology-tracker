@@ -1,9 +1,10 @@
 /* src/components/TechnologyNotes.css */
 .technology-notes {
-    margin-top: 10px;
-    border-top: 1px solid #eaeaea;
-    padding-top: 10px;
-  }
+  margin-top: 12px;     /* карточка сверху, заметки явно ниже */
+  border-top: 1px solid #f1f3f5;
+  padding-top: 10px;
+}
+
   
   .notes-header {
     display: flex;
