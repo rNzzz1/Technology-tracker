@@ -1,7 +1,8 @@
 // src/pages/TechnologyList.jsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTechnologies from '../hooks/useTechnologies'
+import useTechnologiesApi from '../hooks/useTechnologiesApi'
 import FilterButtons from '../components/FilterButtons'
 import SearchBar from '../components/SearchBar'
 import TechnologyCard from '../components/TechnologyCard'
@@ -9,6 +10,7 @@ import TechnologyNotes from '../components/TechnologyNotes'
 import Modal from '../components/Modal/Modal'
 import AddTechnologyForm from '../components/AddTechnologyForm/AddTechnologyForm'
 import QuickActions from '../components/QuickActions'
+import RoadmapImporter from '../components/RoadmapImporter'
 
 function TechnologyList() {
   const {
@@ -28,6 +30,28 @@ function TechnologyList() {
   const [showAddModal, setShowAddModal] = useState(false)
 
   const navigate = useNavigate()
+
+  // API-хук для первичной загрузки (используем только состояния)
+  const {
+    technologies: apiTechnologies,
+    loading: apiLoading,
+    error: apiError,
+    refetch: refetchApi,
+  } = useTechnologiesApi()
+
+  // Первичная загрузка: если локальный список пуст, берём данные из API
+  useEffect(() => {
+    if (technologies.length === 0 && apiTechnologies.length > 0) {
+      apiTechnologies.forEach(tech => {
+        // Добавляем через твой addTechnology, чтобы всё ушло в localStorage
+        addTechnology({
+          title: tech.title,
+          description: tech.description,
+          category: tech.category,
+        })
+      })
+    }
+  }, [apiTechnologies, technologies.length, addTechnology])
 
   const filteredTechnologies = technologies.filter(tech => {
     if (activeFilter !== 'all' && tech.status !== activeFilter) return false
@@ -49,19 +73,17 @@ function TechnologyList() {
     }
   }
 
-  const handleRandomSelect = () => {
-    const notStartedTechs = technologies.filter(
-      tech => tech.status === 'not-started'
-    )
-    if (notStartedTechs.length === 0) {
-      alert('🎉 Все технологии уже начаты или завершены!')
-      return
-    }
-    const randomTech =
-      notStartedTechs[Math.floor(Math.random() * notStartedTechs.length)]
-    updateStatus(randomTech.id, 'in-progress')
-    alert(`🎲 Выбрана технология: ${randomTech.title}`)
+  // Импорт “дорожной карты” в текущий список
+  const handleImportRoadmap = (listFromApi) => {
+    listFromApi.forEach(tech => {
+      addTechnology({
+        title: tech.title,
+        description: tech.description,
+        category: tech.category || 'other',
+      })
+    })
   }
+  
 
   return (
     <div>
@@ -77,6 +99,25 @@ function TechnologyList() {
         </button>
       </header>
 
+      {/* Состояния загрузки/ошибок от API */}
+      {apiLoading && technologies.length === 0 && (
+        <div className="app-loading">
+          <p>Загрузка технологий из API...</p>
+        </div>
+      )}
+
+      {apiError && (
+        <div className="app-error">
+          <p>{apiError}</p>
+          <button className="add-tech-btn secondary" onClick={refetchApi}>
+            Попробовать снова
+          </button>
+        </div>
+      )}
+
+      {/* Импорт дорожной карты */}
+      <RoadmapImporter onImportTechnologies={handleImportRoadmap} />
+
       <SearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -90,11 +131,10 @@ function TechnologyList() {
         technologies={technologies}
       />
 
-      {/* Быстрые действия перенесены сюда */}
       <QuickActions
         onMarkAllCompleted={markAllAsCompleted}
         onResetAll={resetAllStatuses}
-        onRandomSelect={handleRandomSelect}
+        onRandomSelect={() => {}}
         technologies={technologies}
         exportData={exportData}
         importData={importData}
@@ -135,17 +175,16 @@ function TechnologyList() {
                 </button>
               </div>
             </div>
-            <div className="technology-notes-wrapper">
+
             <TechnologyNotes
               techId={tech.id}
               notes={tech.notes}
               onNotesChange={updateNotes}
             />
-            </div>
           </div>
         ))}
 
-        {filteredTechnologies.length === 0 && (
+        {filteredTechnologies.length === 0 && !apiLoading && (
           <div className="no-results">
             <p>🔍 Технологии не найдены</p>
             <p>Попробуйте изменить поисковый запрос или фильтр</p>

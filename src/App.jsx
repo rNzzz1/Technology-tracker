@@ -14,8 +14,14 @@ import Settings from './pages/Settings'
 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [username, setUsername] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true'
+  })
+  
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('username') || ''
+  })
+  
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true'
@@ -25,9 +31,12 @@ function App() {
   }, [])
 
   const handleLogin = (user) => {
+    localStorage.setItem('isLoggedIn', 'true')
+    localStorage.setItem('username', user)
     setIsLoggedIn(true)
     setUsername(user)
   }
+  
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn')
@@ -35,6 +44,7 @@ function App() {
     setIsLoggedIn(false)
     setUsername('')
   }
+  
 
   return (
     <div className="App">

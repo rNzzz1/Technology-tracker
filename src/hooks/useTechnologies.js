@@ -77,8 +77,7 @@ const initialTechnologies = [
 ]
 
 function useTechnologies() {
-  const [technologies, setTechnologies] = useLocalStorage('technologies', initialTechnologies)
-
+  const [technologies, setTechnologies] = useLocalStorage('technologies', [])
   // Функция для обновления статуса технологии
   const updateStatus = (techId) => {
     setTechnologies(prev => 
@@ -119,10 +118,27 @@ function useTechnologies() {
   }
 
   // Функция для добавления новой технологии
-  const addTechnology = (newTech) => {
-    const newId = Math.max(...technologies.map(t => t.id)) + 1
-    setTechnologies(prev => [...prev, { ...newTech, id: newId }])
-  }
+  // Функция для добавления новой технологии
+const addTechnology = (newTech) => {
+  const maxId = technologies.length > 0
+    ? Math.max(...technologies.map(t => t.id))
+    : 0
+
+  const newId = maxId + 1
+
+  setTechnologies(prev => [
+    ...prev,
+    {
+      id: newId,
+      status: 'not-started',
+      notes: '',
+      priority: 1,
+      category: 'other',
+      ...newTech,          // то, что пришло извне, перекрывает дефолты при наличии
+    }
+  ])
+}
+
 
   // Функция для удаления технологии
   const deleteTechnology = (techId) => {

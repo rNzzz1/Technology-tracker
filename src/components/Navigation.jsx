@@ -19,9 +19,8 @@ function Navigation({ isLoggedIn, username, onLogout }) {
 
       <ul className="nav-menu">
         <li>
-          <Link to="/" className={isActive('/') ? 'active' : ''}>
-            Главная
-          </Link>
+        <Link to="/">Главная</Link>
+
         </li>
         <li>
           <Link
