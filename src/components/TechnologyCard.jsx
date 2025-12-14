@@ -1,15 +1,13 @@
 import React from 'react'
 import './TechnologyCard.css'
 
-function TechnologyCard({ id, title, description, status, onStatusChange }) {
-  // Функция для обработки клика - циклически меняем статус
+function TechnologyCard({ id, title, description, status, deadline, onStatusChange }) {
   const handleClick = () => {
     if (onStatusChange) {
       onStatusChange(id)
     }
   }
 
-  // Определяем иконку и стиль в зависимости от статуса
   const getStatusInfo = () => {
     switch (status) {
       case 'completed':
@@ -40,8 +38,8 @@ function TechnologyCard({ id, title, description, status, onStatusChange }) {
   const statusInfo = getStatusInfo()
 
   return (
-    <div 
-      className={statusInfo.className} 
+    <div
+      className={statusInfo.className}
       onClick={handleClick}
       title="Нажмите, чтобы изменить статус"
     >
@@ -52,10 +50,18 @@ function TechnologyCard({ id, title, description, status, onStatusChange }) {
         </div>
         <span className="status-icon">{statusInfo.icon}</span>
       </div>
+
       <div className="card-content">
         <p>{description}</p>
+
+        {deadline && (
+          <p className="card-deadline">
+            Дедлайн: <strong>{deadline}</strong>
+          </p>
+        )}
+
         <div className="card-footer">
-          <span 
+          <span
             className="status-badge"
             style={{ backgroundColor: statusInfo.statusColor }}
           >

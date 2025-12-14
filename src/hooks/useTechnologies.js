@@ -1,6 +1,7 @@
+// src/hooks/useTechnologies.js
 import useLocalStorage from './useLocalStorage'
 
-// Начальные данные для технологий
+// Начальные данные (можешь оставить как есть или использовать при первой инициализации)
 const initialTechnologies = [
   {
     id: 1,
@@ -9,81 +10,21 @@ const initialTechnologies = [
     status: 'not-started',
     notes: '',
     category: 'frontend',
-    priority: 1
+    priority: 1,
+    deadline: '',
+    resources: []
   },
-  {
-    id: 2,
-    title: 'JSX Syntax',
-    description: 'Освоение синтаксиса JSX, понимание различий между JSX и HTML.',
-    status: 'not-started',
-    notes: '',
-    category: 'frontend',
-    priority: 1
-  },
-  {
-    id: 3,
-    title: 'State Management',
-    description: 'Работа с состоянием компонентов, использование useState и useEffect хуков.',
-    status: 'not-started',
-    notes: '',
-    category: 'frontend',
-    priority: 2
-  },
-  {
-    id: 4,
-    title: 'Props & Context',
-    description: 'Передача данных между компонентами и использование Context API.',
-    status: 'not-started',
-    notes: '',
-    category: 'frontend',
-    priority: 2
-  },
-  {
-    id: 5,
-    title: 'Node.js Basics',
-    description: 'Основы серверного JavaScript, работа с модулями и событиями.',
-    status: 'not-started',
-    notes: '',
-    category: 'backend',
-    priority: 3
-  },
-  {
-    id: 6,
-    title: 'Express.js Framework',
-    description: 'Создание REST API с помощью Express.js, работа с маршрутизацией.',
-    status: 'not-started',
-    notes: '',
-    category: 'backend',
-    priority: 3
-  },
-  {
-    id: 7,
-    title: 'MongoDB Database',
-    description: 'Работа с NoSQL базой данных MongoDB, CRUD операции.',
-    status: 'not-started',
-    notes: '',
-    category: 'database',
-    priority: 4
-  },
-  {
-    id: 8,
-    title: 'Git & GitHub',
-    description: 'Система контроля версий, работа с ветками и пулл-реквестами.',
-    status: 'not-started',
-    notes: '',
-    category: 'tools',
-    priority: 1
-  }
+  // остальные по аналогии...
 ]
 
 function useTechnologies() {
   const [technologies, setTechnologies] = useLocalStorage('technologies', [])
+
   // Функция для обновления статуса технологии
   const updateStatus = (techId) => {
-    setTechnologies(prev => 
+    setTechnologies(prev =>
       prev.map(tech => {
         if (tech.id === techId) {
-          // Циклически меняем статус: not-started → in-progress → completed → not-started
           const statusOrder = ['not-started', 'in-progress', 'completed']
           const currentIndex = statusOrder.indexOf(tech.status)
           const nextIndex = (currentIndex + 1) % statusOrder.length
@@ -103,42 +44,60 @@ function useTechnologies() {
     )
   }
 
+  // Функция для обновления дедлайна
+  const updateDeadline = (techId, newDeadline) => {
+    setTechnologies(prev =>
+      prev.map(tech =>
+        tech.id === techId ? { ...tech, deadline: newDeadline } : tech
+      )
+    )
+  }
+  // Массовое обновление статусов
+const updateStatusBulk = (ids, newStatus) => {
+  setTechnologies(prev =>
+    prev.map(tech =>
+      ids.includes(tech.id) ? { ...tech, status: newStatus } : tech
+    )
+  )
+}
+
+
   // Функция для отметки всех как выполненных
   const markAllAsCompleted = () => {
-    setTechnologies(prev => 
+    setTechnologies(prev =>
       prev.map(tech => ({ ...tech, status: 'completed' }))
     )
   }
 
   // Функция для сброса всех статусов
   const resetAllStatuses = () => {
-    setTechnologies(prev => 
+    setTechnologies(prev =>
       prev.map(tech => ({ ...tech, status: 'not-started' }))
     )
   }
 
   // Функция для добавления новой технологии
-  // Функция для добавления новой технологии
-const addTechnology = (newTech) => {
-  const maxId = technologies.length > 0
-    ? Math.max(...technologies.map(t => t.id))
-    : 0
+  const addTechnology = (newTech) => {
+    const maxId = technologies.length > 0
+      ? Math.max(...technologies.map(t => t.id))
+      : 0
 
-  const newId = maxId + 1
+    const newId = maxId + 1
 
-  setTechnologies(prev => [
-    ...prev,
-    {
-      id: newId,
-      status: 'not-started',
-      notes: '',
-      priority: 1,
-      category: 'other',
-      ...newTech,          // то, что пришло извне, перекрывает дефолты при наличии
-    }
-  ])
-}
-
+    setTechnologies(prev => [
+      ...prev,
+      {
+        id: newId,
+        status: 'not-started',
+        notes: '',
+        priority: 1,
+        category: 'other',
+        deadline: '',
+        resources: [],
+        ...newTech
+      }
+    ])
+  }
 
   // Функция для удаления технологии
   const deleteTechnology = (techId) => {
@@ -160,14 +119,16 @@ const addTechnology = (newTech) => {
       const completed = categoryTechs.filter(tech => tech.status === 'completed').length
       return {
         category,
-        progress: categoryTechs.length > 0 ? Math.round((completed / categoryTechs.length) * 100) : 0,
+        progress: categoryTechs.length > 0
+          ? Math.round((completed / categoryTechs.length) * 100)
+          : 0,
         total: categoryTechs.length,
         completed
       }
     })
   }
 
-  // Функция для экспорта данных
+  // Экспорт данных
   const exportData = () => {
     const data = {
       exportedAt: new Date().toISOString(),
@@ -177,7 +138,7 @@ const addTechnology = (newTech) => {
     return JSON.stringify(data, null, 2)
   }
 
-  // Функция для импорта данных
+  // Импорт данных
   const importData = (data) => {
     try {
       const parsed = JSON.parse(data)
@@ -195,6 +156,8 @@ const addTechnology = (newTech) => {
     technologies,
     updateStatus,
     updateNotes,
+    updateDeadline,
+    updateStatusBulk,
     markAllAsCompleted,
     resetAllStatuses,
     addTechnology,
@@ -204,6 +167,7 @@ const addTechnology = (newTech) => {
     exportData,
     importData
   }
+  
 }
 
 export default useTechnologies

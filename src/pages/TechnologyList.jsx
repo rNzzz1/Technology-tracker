@@ -12,26 +12,37 @@ import AddTechnologyForm from '../components/AddTechnologyForm/AddTechnologyForm
 import QuickActions from '../components/QuickActions'
 import RoadmapImporter from '../components/RoadmapImporter'
 import TechnologySearch from '../components/TechnologySearch'
+import DeadlineForm from '../components/DeadlineForm'
+import BulkStatusForm from '../components/BulkStatusForm'
+
 
 
 function TechnologyList() {
-  const {
-    technologies,
-    updateStatus,
-    updateNotes,
-    addTechnology,
-    deleteTechnology,
-    markAllAsCompleted,
-    resetAllStatuses,
-    exportData,
-    importData
-    
-  } = useTechnologies()
+    const {
+        technologies,
+        updateStatus,
+        updateNotes,
+        updateDeadline,
+        updateStatusBulk,
+        addTechnology,
+        deleteTechnology,
+        markAllAsCompleted,
+        resetAllStatuses,
+        exportData,
+        importData
+      } = useTechnologies()
+      
+      
 
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
   const [apiSearchResults, setApiSearchResults] = useState([])
+  const [showDeadlineModal, setShowDeadlineModal] = useState(false)
+  const [selectedTechId, setSelectedTechId] = useState(null)
+  const [showBulkStatusModal, setShowBulkStatusModal] = useState(false)
+
+
 
 
   const navigate = useNavigate()
@@ -62,8 +73,10 @@ function TechnologyList() {
 
   const filteredTechnologies = technologies.filter(tech => {
     if (activeFilter !== 'all' && tech.status !== activeFilter) return false
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
+  
+    const q = (searchQuery || '').toLowerCase()
+  
+    if (q) {
       return (
         tech.title.toLowerCase().includes(q) ||
         tech.description.toLowerCase().includes(q) ||
@@ -71,8 +84,11 @@ function TechnologyList() {
         tech.category.toLowerCase().includes(q)
       )
     }
+  
     return true
   })
+  
+  
 
   const handleDeleteTechnology = (id) => {
     if (window.confirm('Вы уверены, что хотите удалить эту технологию?')) {
@@ -136,6 +152,15 @@ function TechnologyList() {
 
       <TechnologySearch onResults={setApiSearchResults} />
 
+      <SearchBar
+    searchQuery={searchQuery}
+    setSearchQuery={setSearchQuery}
+    resultsCount={filteredTechnologies.length}
+    totalCount={technologies.length}
+    />
+
+
+
         {apiSearchResults.length > 0 && (
         <div className="api-search-results">
             <h3>Результаты поиска из API: {apiSearchResults.length}</h3>
@@ -164,6 +189,12 @@ function TechnologyList() {
   exportData={exportData}
   importData={importData}
 />
+<button
+  className="add-tech-btn secondary"
+  onClick={() => setShowBulkStatusModal(true)}
+>
+  ✏️ Массовое изменение статуса
+</button>
 
 
       <div className="technology-list">
@@ -183,13 +214,17 @@ function TechnologyList() {
             </div>
 
             <div className="technology-card-with-link">
-              <TechnologyCard
-                id={tech.id}
-                title={tech.title}
-                description={tech.description}
-                status={tech.status}
-                onStatusChange={updateStatus}
-              />
+            <TechnologyCard
+            id={tech.id}
+            title={tech.title}
+            description={tech.description}
+            status={tech.status}
+            deadline={tech.deadline}      // передаём срок
+            onStatusChange={updateStatus}
+            />
+
+          
+
 
               <div className="card-footer-actions">
                 <button
@@ -199,6 +234,17 @@ function TechnologyList() {
                 >
                   Подробнее
                 </button>
+                <button
+                type="button"
+                className="card-more-link"
+                onClick={() => {
+                    setSelectedTechId(tech.id)
+                    setShowDeadlineModal(true)
+                }}
+                >
+                Установить срок
+                </button>
+
               </div>
             </div>
 
@@ -206,6 +252,7 @@ function TechnologyList() {
               techId={tech.id}
               notes={tech.notes}
               onNotesChange={updateNotes}
+              deadline={tech.deadline}
             />
           </div>
         ))}
@@ -235,6 +282,42 @@ function TechnologyList() {
           onClose={() => setShowAddModal(false)}
         />
       </Modal>
+      <Modal
+        isOpen={showDeadlineModal}
+        onClose={() => setShowDeadlineModal(false)}
+        title="Срок изучения технологии"
+        size="small"
+>
+  {selectedTechId && (
+    <DeadlineForm
+      initialDeadline={
+        technologies.find(t => t.id === selectedTechId)?.deadline || ''
+      }
+      onSave={(newDate) => {
+        updateDeadline(selectedTechId, newDate)
+        setShowDeadlineModal(false)
+      }}
+      onCancel={() => setShowDeadlineModal(false)}
+    />
+  )}
+</Modal>
+<Modal
+  isOpen={showBulkStatusModal}
+  onClose={() => setShowBulkStatusModal(false)}
+  title="Массовое изменение статусов"
+  size="medium"
+>
+  <BulkStatusForm
+    technologies={technologies}
+    onApply={(ids, newStatus) => {
+      updateStatusBulk(ids, newStatus)
+      setShowBulkStatusModal(false)
+    }}
+    onCancel={() => setShowBulkStatusModal(false)}
+  />
+</Modal>
+
+
     </div>
   )
 }
