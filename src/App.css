@@ -414,3 +414,353 @@
 .features li + li {
   margin-top: 6px;
 }
+.App {
+  min-height: 100vh;
+  background-color: inherit; /* фон берётся из MUI через CssBaseline */
+}
+.technology-list,
+.technology-card-wrapper,
+.technology-card-with-link,
+.FilterButtons-wrap,
+.quick-actions,
+.search-bar,
+.api-search-results,
+.no-results {
+  background: #ffffff;
+  /* или background-color: #fff; */
+}
+/* светлая тема — как было */
+.technology-card-wrapper,
+.technology-card-with-link {
+  background-color: #ffffff;
+}
+
+/* тёмная тема для карточек */
+.App.dark .technology-card-wrapper,
+.App.dark .technology-card-with-link {
+  background-color: #1f1f1f;
+  border-color: #333;
+  color: #f5f5f5;
+}
+
+/* тёмная тема для верхней панели навигации */
+.App.dark .main-navigation {
+  background-color: #1f1f1f;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.App.dark .nav-brand h2,
+.App.dark .nav-menu a,
+.App.dark .nav-user,
+.App.dark .nav-user a {
+  color: #f5f5f5;
+}
+
+.App.dark .logout-btn {
+  background-color: #2b2b2b;
+  color: #f5f5f5;
+  border-color: #444;
+}
+/* тёмная тема: главный заголовок и подзаголовок */
+.App.dark .app-header h1 {
+  color: #f5f5f5;           /* ярко‑белый текст */
+}
+
+.App.dark .app-header p {
+  color: #d0d0d0;           /* более заметный серый */
+}
+
+/* тёмная тема: кнопки на главной */
+.App.dark .home-btn.primary {
+  /* вместо светлого градиента — тёмная кнопка с акцентным бордером */
+  background: #222;
+  color: #f5f5f5;
+  border: 1px solid #4ecdc4;
+}
+
+.App.dark .home-btn {
+  background: #222;
+  color: #f5f5f5;
+  border: 1px solid #444;
+}
+
+.App.dark .home-btn:hover,
+.App.dark .home-btn.primary:hover {
+  background: #2d2d2d;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+/* Тёмная тема для страницы статистики */
+.App.dark .page.stats-page,
+.App.dark .progress-dashboard,
+.App.dark .progress-summary,
+.App.dark .category-progress,
+.App.dark .category-card,
+.App.dark .summary-section,
+.App.dark .summary-card {
+  background-color: #1f1f1f;
+  border-color: #333;
+  color: #f5f5f5;
+}
+
+/* Текст заголовков и подписей */
+.App.dark .page.stats-page h1,
+.App.dark .page.stats-page h2,
+.App.dark .page.stats-page h3,
+.App.dark .page.stats-page p,
+.App.dark .page.stats-page span {
+  color: #f5f5f5;
+}
+
+/* Светлые “карточки” внутри статистики делаем чуть темнее, но с контрастом */
+.App.dark .category-card,
+.App.dark .summary-card {
+  background-color: #262626;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Полосы прогресса в тёмном стиле */
+.App.dark .progress-bar-background {
+  background-color: #333;
+}
+
+.App.dark .progress-bar-fill {
+  background-color: #45b7d1; /* твой акцентный цвет */
+}
+
+/* Цвет маленьких меток/иконок категорий */
+.App.dark .summary-card .label,
+.App.dark .category-card .label {
+  color: #f5f5f5;
+}
+
+/* тёмная тема: вся панель поиска */
+.App.dark .search-bar {
+  background-color: #1f1f1f;
+  border-color: #333;
+  color: #f5f5f5;
+}
+
+/* инпуты внутри панели поиска */
+.App.dark .search-bar input {
+  background-color: #222;
+  border-color: #444;
+  color: #f5f5f5;
+}
+
+/* placeholder тоже делаем светлым */
+.App.dark .search-bar input::placeholder {
+  color: #888;
+}
+/* светлая тема — как было (можно оставить, если есть) */
+.api-tech-search-input {
+  background-color: #ffffff;
+}
+
+/* тёмная тема: инпут поиска по API */
+.App.dark .api-tech-search-input {
+  background-color: #222;      /* тёмный фон */
+  border-color: #444;          /* тёмная рамка */
+  color: #f5f5f5;              /* светлый текст */
+}
+
+/* placeholder внутри этого инпута */
+.App.dark .api-tech-search-input::placeholder {
+  color: #888;
+}
+
+/* ТЁМНАЯ ТЕМА: блок поиска по API */
+.App.dark .technology-search {
+  color: #f5f5f5;
+}
+
+/* тёмный фон контейнера и инпута */
+.App.dark .technology-search .search-box {
+  background-color: #1f1f1f;
+  border-radius: 12px;
+}
+
+.App.dark .technology-search .search-input {
+  background-color: #222;
+  border: 1px solid #444;
+  color: #f5f5f5;
+}
+
+/* плейсхолдер */
+.App.dark .technology-search .search-input::placeholder {
+  color: #888;
+}
+
+/* индикатор загрузки */
+.App.dark .technology-search .search-loading {
+  color: #f5f5f5;
+}
+/* ТЁМНАЯ ТЕМА: блок фильтров */
+.App.dark .filter-buttons {
+  background-color: #1f1f1f;
+  border-radius: 16px;
+  color: #f5f5f5;
+}
+
+/* сами кнопки фильтров */
+.App.dark .filter-buttons .filter-btn {
+  background-color: #222;
+  border: 1px solid #444;
+  color: #f5f5f5;
+}
+
+/* активный фильтр */
+.App.dark .filter-buttons .filter-btn.active {
+  background-color: #2b8fbf;
+  border-color: #45b7d1;
+  color: #fff;
+}
+
+/* hover в тёмной теме */
+.App.dark .filter-buttons .filter-btn:hover {
+  background-color: #2d2d2d;
+}
+
+/* эмодзи и подписи */
+.App.dark .filter-buttons .filter-emoji,
+.App.dark .filter-buttons .filter-label {
+  color: inherit;
+}
+/* ТЁМНАЯ ТЕМА: блок "Быстрые действия" */
+.App.dark .quick-actions {
+  background-color: #1f1f1f;
+  border-radius: 16px;
+  color: #f5f5f5;
+}
+
+/* контейнер с кнопками */
+.App.dark .quick-actions .action-buttons {
+  background-color: transparent;
+}
+
+/* сами кнопки быстрых действий (градиенты оставляем, но чуть затемним текст/рамку при желании) */
+.App.dark .quick-actions .action-btn {
+  color: #f5f5f5;
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* счётчики на кнопках */
+.App.dark .quick-actions .action-count {
+  background-color: rgba(0, 0, 0, 0.25);
+  color: #f5f5f5;
+}
+/* ===== КРАСИВАЯ КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ ===== */
+
+.theme-toggle-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #444;
+  background: #111;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle-pill__thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #f5f5f5;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  transform: translateX(0);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.theme-toggle-pill__label {
+  padding: 0 2px;
+}
+
+/* Светлая тема */
+.theme-toggle-pill--light {
+  background: #f5f5f5;
+  color: #222;
+  border-color: #ccc;
+}
+
+.theme-toggle-pill--light .theme-toggle-pill__thumb {
+  background: #ffd54f;
+  transform: translateX(0);
+}
+
+/* Тёмная тема */
+.theme-toggle-pill--dark {
+  background: #111;
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+.theme-toggle-pill--dark .theme-toggle-pill__thumb {
+  background: #90caf9;
+  transform: translateX(18px);
+}
+
+/* Ховер */
+.theme-toggle-pill:hover {
+  border-color: #64b5f6;
+}
+.theme-toggle-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;   /* элементы по краям + центр */
+  padding: 4px 12px;
+  min-width: 150px;
+  border-radius: 999px;
+  border: 1px solid #444;
+  background: #111;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.theme-toggle-pill__thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #ffd54f;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.theme-toggle-pill__label {
+  flex: 1;
+  text-align: center;              /* текст строго по центру */
+  padding: 0 4px;
+}
+
+.theme-toggle-pill__icon {
+  flex-shrink: 0;                  /* иконка справа, не заезжает на текст */
+}
+
+/* светлая/тёмная палитра */
+
+.theme-toggle-pill--light {
+  background: #f5f5f5;
+  color: #222;
+  border-color: #ccc;
+}
+
+.theme-toggle-pill--light .theme-toggle-pill__thumb {
+  background: #ffd54f;
+}
+
+.theme-toggle-pill--dark {
+  background: #111;
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+.theme-toggle-pill--dark .theme-toggle-pill__thumb {
+  background: #90caf9;
+}

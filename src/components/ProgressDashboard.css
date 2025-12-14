@@ -127,3 +127,50 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
+ /* ==== ТЁМНАЯ ТЕМА ДЛЯ ПРОГРЕСС-ДАШБОРДА ==== */
+
+/* сама большая белая панель */
+.App.dark .progress-dashboard {
+  background-color: #000 !important;
+  color: #f5f5f5 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* карточки категорий (Фронтенд, Бэкенд и т.д.) */
+.App.dark .category-item {
+  background-color: #000 !important;   /* чёрная панель */
+  color: #f5f5f5 !important;
+  border-left-color: #222 !important;  /* тёмная полоска слева */
+}
+
+/* имя категории и текст внутри */
+.App.dark .category-name,
+.App.dark .category-item span,
+.App.dark .category-item p {
+  color: #f5f5f5 !important;
+}
+
+/* белый кружок 3/5, 1/2 и т.п. */
+.App.dark .category-stats {
+  background-color: #000 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #444 !important;
+}
+
+/* блок summary внизу */
+.App.dark .dashboard-summary {
+  background: #000 !important;
+  color: #f5f5f5 !important;
+}
+
+/* элементы summary */
+.App.dark .summary-item {
+  background-color: #000 !important;
+  color: #f5f5f5 !important;
+}
+
+/* подписи в summary */
+.App.dark .summary-title,
+.App.dark .summary-progress {
+  color: #f5f5f5 !important;
+}

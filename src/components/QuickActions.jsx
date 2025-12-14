@@ -1,60 +1,59 @@
+// src/components/QuickActions.jsx
 import React, { useState } from 'react'
 import Modal from './Modal/Modal'
 import './QuickActions.css'
+import { useNotifications } from '../components/NotificationsProvider'
 
-function QuickActions({ 
-  onMarkAllCompleted, 
-  onResetAll, 
-  onRandomSelect, 
+function QuickActions({
+  onMarkAllCompleted,
+  onResetAll,
+  onRandomSelect,
   technologies,
   exportData,
   importData
 }) {
+  const { showNotification } = useNotifications()
   const [showExportModal, setShowExportModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
   const [importText, setImportText] = useState('')
   const [importError, setImportError] = useState('')
-  
+
   const notStartedCount = technologies.filter(tech => tech.status === 'not-started').length
   const completedCount = technologies.filter(tech => tech.status === 'completed').length
 
   const handleExport = () => {
     const data = exportData()
     setShowExportModal(true)
-    
-    // Создаём временный элемент для копирования в буфер обмена
+
     navigator.clipboard.writeText(data)
       .then(() => {
-        console.log('Данные скопированы в буфер обмена')
+        showNotification('Данные скопированы в буфер обмена', 'success')
       })
       .catch(err => {
         console.error('Ошибка копирования:', err)
+        showNotification('Не удалось скопировать данные в буфер обмена', 'error')
       })
   }
 
   const handleImport = () => {
-    if (!importText.trim()) {
-      setImportError('Введите данные для импорта')
-      return
-    }
-    
     const success = importData(importText)
     if (success) {
       setImportText('')
       setImportError('')
       setShowImportModal(false)
-      alert('✅ Данные успешно импортированы!')
+      showNotification('Данные успешно импортированы', 'success')
     } else {
       setImportError('❌ Ошибка импорта. Проверьте формат данных.')
+      showNotification('Ошибка импорта: неверный формат JSON или структуры данных', 'error')
     }
   }
 
   return (
     <div className="quick-actions">
       <h3>⚡ Быстрые действия</h3>
-      
+
       <div className="action-buttons">
-        <button 
+        <button
           className="action-btn mark-all-btn"
           onClick={onMarkAllCompleted}
           title="Отметить все технологии как изученные"
@@ -62,34 +61,34 @@ function QuickActions({
           ✅ Отметить все как выполненные
           <span className="action-count">{completedCount}/{technologies.length}</span>
         </button>
-        
-        <button 
+
+        <button
           className="action-btn reset-btn"
           onClick={onResetAll}
           title="Сбросить статусы всех технологий"
         >
           🔄 Сбросить все статусы
         </button>
-        
-        <button 
+
+        <button
           className="action-btn random-btn"
           onClick={onRandomSelect}
           disabled={notStartedCount === 0}
-          title={notStartedCount === 0 ? "Все технологии уже начаты" : "Выбрать случайную технологию"}
+          title={notStartedCount === 0 ? 'Все технологии уже начаты' : 'Выбрать случайную технологию'}
         >
           🎲 Случайный выбор
           <span className="action-count">{notStartedCount}</span>
         </button>
-        
-        <button 
+
+        <button
           className="action-btn export-btn"
           onClick={handleExport}
           title="Экспортировать данные в JSON"
         >
           📤 Экспорт данных
         </button>
-        
-        <button 
+
+        <button
           className="action-btn import-btn"
           onClick={() => setShowImportModal(true)}
           title="Импортировать данные из JSON"
@@ -107,16 +106,18 @@ function QuickActions({
       >
         <div className="modal-export-content">
           <p>✅ Данные успешно экспортированы и скопированы в буфер обмена!</p>
-          <p className="export-hint">Вы можете вставить данные в текстовый редактор или сохранить в файл.</p>
-          
+          <p className="export-hint">
+            Вы можете вставить данные в текстовый редактор или сохранить в файл.
+          </p>
+
           <div className="export-data-container">
             <pre className="export-data">
               {exportData()}
             </pre>
           </div>
-          
+
           <div className="modal-actions">
-            <button 
+            <button
               className="modal-btn secondary"
               onClick={() => {
                 const data = exportData()
@@ -131,7 +132,7 @@ function QuickActions({
             >
               💾 Скачать файл
             </button>
-            <button 
+            <button
               className="modal-btn primary"
               onClick={() => setShowExportModal(false)}
             >
@@ -154,7 +155,7 @@ function QuickActions({
       >
         <div className="modal-import-content">
           <p>Вставьте данные JSON для импорта:</p>
-          
+
           <textarea
             value={importText}
             onChange={(e) => {
@@ -165,25 +166,25 @@ function QuickActions({
             rows="8"
             className={`import-textarea ${importError ? 'error' : ''}`}
           />
-          
+
           {importError && (
             <div className="import-error">
               {importError}
             </div>
           )}
-          
+
           <div className="import-hint">
             ⚠️ Внимание: Импорт заменит все текущие данные!
           </div>
-          
+
           <div className="modal-actions">
-            <button 
+            <button
               className="modal-btn secondary"
               onClick={() => setShowImportModal(false)}
             >
               Отмена
             </button>
-            <button 
+            <button
               className="modal-btn primary"
               onClick={handleImport}
               disabled={!importText.trim()}

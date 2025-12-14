@@ -14,25 +14,25 @@ import RoadmapImporter from '../components/RoadmapImporter'
 import TechnologySearch from '../components/TechnologySearch'
 import DeadlineForm from '../components/DeadlineForm'
 import BulkStatusForm from '../components/BulkStatusForm'
-
-
+import { useNotifications } from '../components/NotificationsProvider'
+import SimpleTechCard from '../components/SimpleTechCard'
 
 function TechnologyList() {
-    const {
-        technologies,
-        updateStatus,
-        updateNotes,
-        updateDeadline,
-        updateStatusBulk,
-        addTechnology,
-        deleteTechnology,
-        markAllAsCompleted,
-        resetAllStatuses,
-        exportData,
-        importData
-      } = useTechnologies()
-      
-      
+  const {
+    technologies,
+    updateStatus,
+    updateNotes,
+    updateDeadline,
+    updateStatusBulk,
+    addTechnology,
+    deleteTechnology,
+    markAllAsCompleted,
+    resetAllStatuses,
+    exportData,
+    importData
+  } = useTechnologies()
+
+  const { showNotification } = useNotifications()
 
   const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -42,14 +42,8 @@ function TechnologyList() {
   const [selectedTechId, setSelectedTechId] = useState(null)
   const [showBulkStatusModal, setShowBulkStatusModal] = useState(false)
 
-
-
-
   const navigate = useNavigate()
 
-
-  
-  // API-хук для первичной загрузки (используем только состояния)
   const {
     technologies: apiTechnologies,
     loading: apiLoading,
@@ -57,11 +51,9 @@ function TechnologyList() {
     refetch: refetchApi,
   } = useTechnologiesApi()
 
-  // Первичная загрузка: если локальный список пуст, берём данные из API
   useEffect(() => {
     if (technologies.length === 0 && apiTechnologies.length > 0) {
       apiTechnologies.forEach(tech => {
-        // Добавляем через твой addTechnology, чтобы всё ушло в localStorage
         addTechnology({
           title: tech.title,
           description: tech.description,
@@ -73,9 +65,9 @@ function TechnologyList() {
 
   const filteredTechnologies = technologies.filter(tech => {
     if (activeFilter !== 'all' && tech.status !== activeFilter) return false
-  
+
     const q = (searchQuery || '').toLowerCase()
-  
+
     if (q) {
       return (
         tech.title.toLowerCase().includes(q) ||
@@ -84,19 +76,24 @@ function TechnologyList() {
         tech.category.toLowerCase().includes(q)
       )
     }
-  
+
     return true
   })
-  
-  
 
   const handleDeleteTechnology = (id) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту технологию?')) {
+    const tech = technologies.find(t => t.id === id)
+
+    if (!tech) {
+      showNotification('Технология не найдена', 'error')
+      return
+    }
+
+    if (window.confirm(`Вы уверены, что хотите удалить технологию "${tech.title}"?`)) {
       deleteTechnology(id)
+      showNotification(`Технология "${tech.title}" удалена`, 'warning')
     }
   }
 
-  // Импорт “дорожной карты” в текущий список
   const handleImportRoadmap = (listFromApi) => {
     listFromApi.forEach(tech => {
       addTechnology({
@@ -106,16 +103,13 @@ function TechnologyList() {
       })
     })
   }
+
   const handleRandomSelect = () => {
     if (technologies.length === 0) return
-  
     const randomIndex = Math.floor(Math.random() * technologies.length)
     const randomTech = technologies[randomIndex]
-  
-    // например, просто перейти на страницу технологии
     navigate(`/technology/${randomTech.id}`)
   }
-  
 
   return (
     <div>
@@ -131,7 +125,6 @@ function TechnologyList() {
         </button>
       </header>
 
-      {/* Состояния загрузки/ошибок от API */}
       {apiLoading && technologies.length === 0 && (
         <div className="app-loading">
           <p>Загрузка технологий из API...</p>
@@ -147,33 +140,29 @@ function TechnologyList() {
         </div>
       )}
 
-      {/* Импорт дорожной карты */}
       <RoadmapImporter onImportTechnologies={handleImportRoadmap} />
 
       <TechnologySearch onResults={setApiSearchResults} />
 
       <SearchBar
-    searchQuery={searchQuery}
-    setSearchQuery={setSearchQuery}
-    resultsCount={filteredTechnologies.length}
-    totalCount={technologies.length}
-    />
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        resultsCount={filteredTechnologies.length}
+        totalCount={technologies.length}
+      />
 
-
-
-        {apiSearchResults.length > 0 && (
+      {apiSearchResults.length > 0 && (
         <div className="api-search-results">
-            <h3>Результаты поиска из API: {apiSearchResults.length}</h3>
-            <ul>
+          <h3>Результаты поиска из API: {apiSearchResults.length}</h3>
+          <ul>
             {apiSearchResults.map(tech => (
-                <li key={tech.id}>
+              <li key={tech.id}>
                 <strong>{tech.title}</strong> — {tech.category}
-                </li>
+              </li>
             ))}
-            </ul>
+          </ul>
         </div>
-        )}
-
+      )}
 
       <FilterButtons
         activeFilter={activeFilter}
@@ -181,21 +170,21 @@ function TechnologyList() {
         technologies={technologies}
       />
 
-<QuickActions
-  onMarkAllCompleted={markAllAsCompleted}
-  onResetAll={resetAllStatuses}
-  onRandomSelect={handleRandomSelect}
-  technologies={technologies}
-  exportData={exportData}
-  importData={importData}
-/>
-<button
-  className="add-tech-btn secondary"
-  onClick={() => setShowBulkStatusModal(true)}
->
-  ✏️ Массовое изменение статуса
-</button>
+      <QuickActions
+        onMarkAllCompleted={markAllAsCompleted}
+        onResetAll={resetAllStatuses}
+        onRandomSelect={handleRandomSelect}
+        technologies={technologies}
+        exportData={exportData}
+        importData={importData}
+      />
 
+      <button
+        className="add-tech-btn secondary"
+        onClick={() => setShowBulkStatusModal(true)}
+      >
+        ✏️ Массовое изменение статуса
+      </button>
 
       <div className="technology-list">
         {filteredTechnologies.map(tech => (
@@ -214,17 +203,14 @@ function TechnologyList() {
             </div>
 
             <div className="technology-card-with-link">
-            <TechnologyCard
-            id={tech.id}
-            title={tech.title}
-            description={tech.description}
-            status={tech.status}
-            deadline={tech.deadline}      // передаём срок
-            onStatusChange={updateStatus}
-            />
-
-          
-
+              <TechnologyCard
+                id={tech.id}
+                title={tech.title}
+                description={tech.description}
+                status={tech.status}
+                deadline={tech.deadline}
+                onStatusChange={updateStatus}
+              />
 
               <div className="card-footer-actions">
                 <button
@@ -235,16 +221,15 @@ function TechnologyList() {
                   Подробнее
                 </button>
                 <button
-                type="button"
-                className="card-more-link"
-                onClick={() => {
+                  type="button"
+                  className="card-more-link"
+                  onClick={() => {
                     setSelectedTechId(tech.id)
                     setShowDeadlineModal(true)
-                }}
+                  }}
                 >
-                Установить срок
+                  Установить срок
                 </button>
-
               </div>
             </div>
 
@@ -271,6 +256,19 @@ function TechnologyList() {
         )}
       </div>
 
+      {/* Отдельный пример карточки на Material UI */}
+      {technologies[0] && (
+        <div style={{ marginTop: '32px' }}>
+          <h2 style={{ marginBottom: '16px' }}>
+            Пример карточки на Material UI
+          </h2>
+          <SimpleTechCard
+            technology={technologies[0]}
+            onStatusChange={updateStatus}
+          />
+        </div>
+      )}
+
       <Modal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
@@ -282,42 +280,47 @@ function TechnologyList() {
           onClose={() => setShowAddModal(false)}
         />
       </Modal>
+
       <Modal
         isOpen={showDeadlineModal}
         onClose={() => setShowDeadlineModal(false)}
         title="Срок изучения технологии"
         size="small"
->
-  {selectedTechId && (
-    <DeadlineForm
-      initialDeadline={
-        technologies.find(t => t.id === selectedTechId)?.deadline || ''
-      }
-      onSave={(newDate) => {
-        updateDeadline(selectedTechId, newDate)
-        setShowDeadlineModal(false)
-      }}
-      onCancel={() => setShowDeadlineModal(false)}
-    />
-  )}
-</Modal>
-<Modal
-  isOpen={showBulkStatusModal}
-  onClose={() => setShowBulkStatusModal(false)}
-  title="Массовое изменение статусов"
-  size="medium"
->
-  <BulkStatusForm
-    technologies={technologies}
-    onApply={(ids, newStatus) => {
-      updateStatusBulk(ids, newStatus)
-      setShowBulkStatusModal(false)
-    }}
-    onCancel={() => setShowBulkStatusModal(false)}
-  />
-</Modal>
+      >
+        {selectedTechId && (
+          <DeadlineForm
+            initialDeadline={
+              technologies.find(t => t.id === selectedTechId)?.deadline || ''
+            }
+            onSave={(newDate) => {
+              const ok = updateDeadline(selectedTechId, newDate)
+              if (ok !== false) {
+                showNotification(`Дедлайн установлен на ${newDate}`, 'info')
+              } else {
+                showNotification('Не удалось сохранить дедлайн', 'error')
+              }
+              setShowDeadlineModal(false)
+            }}
+            onCancel={() => setShowDeadlineModal(false)}
+          />
+        )}
+      </Modal>
 
-
+      <Modal
+        isOpen={showBulkStatusModal}
+        onClose={() => setShowBulkStatusModal(false)}
+        title="Массовое изменение статусов"
+        size="medium"
+      >
+        <BulkStatusForm
+          technologies={technologies}
+          onApply={(ids, newStatus) => {
+            const changed = updateStatusBulk(ids, newStatus)
+            return changed
+          }}
+          onCancel={() => setShowBulkStatusModal(false)}
+        />
+      </Modal>
     </div>
   )
 }

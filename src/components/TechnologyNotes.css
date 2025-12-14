@@ -98,3 +98,34 @@
     font-size: 0.8rem;
     opacity: 0.7;
   }
+  .App.dark .technology-card-inner {
+    background-color: #181818;
+    border-color: #333;
+  }
+  /* ТЁМНАЯ ТЕМА: панель "Заметки" */
+.App.dark .notes-panel {
+  background-color: #181818;
+  border-color: #333;
+  color: #f5f5f5;
+}
+
+/* кнопка "Нет заметок" */
+.App.dark .notes-panel .notes-empty-badge {
+  background-color: #222;
+  border-color: #444;
+  color: #f5f5f5;
+}
+/* Тёмная тема: плашка "Заметки" чёрная */
+
+.App.dark .technology-notes .notes-header {
+  background-color: #000 !important;
+  color: #f5f5f5 !important;
+  border-radius: 12px !important; /* оставь как у тебя */
+  border: 1px solid #333 !important;
+}
+
+.App.dark .technology-notes .notes-counter {
+  background-color: #111 !important;
+  color: #f5f5f5 !important;
+  border-color: #333 !important;
+}

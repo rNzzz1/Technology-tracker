@@ -80,3 +80,95 @@
     background-color: #ff6b6b;
     color: white;
   }
+  /* === ТЁМНАЯ ТЕМА ДЛЯ КАРТОЧЕК === */
+
+/* перекрашиваем ВСЁ внутри .technology-card */
+.App.dark .technology-card,
+.App.dark .technology-card * {
+  background-color: #181818 !important;
+  color: #f5f5f5 !important;
+}
+
+/* статусная плашка оставляет свой цвет фона, только текст делаем тёмным */
+.App.dark .technology-card .status-badge {
+  background-color: inherit;       /* оставит inline-цвет */
+  color: #0b0b0b !important;
+}
+
+/* кнопки под карточкой и блок "Заметки" не трогаем (если они снаружи .technology-card) */
+/* Внешний контейнер карточки в светлой теме (как было) */
+.technology-card {
+  background-color: #ffffff;
+}
+
+/* ТЁМНАЯ ТЕМА: убираем белую рамку вокруг контента */
+
+.App.dark .technology-card {
+  background-color: #181818;
+  border-color: #333;
+}
+
+/* тут перечисляем все внутренние слои, которые дают белый фон/обводку */
+.App.dark .technology-card > div,
+.App.dark .technology-card .card-inner,
+.App.dark .technology-card .card-border {
+  background-color: #181818;
+  border-color: #333;
+}
+.App.dark .technology-card-inner {
+  background-color: #181818;
+  border-color: #333;
+}
+/* ТЁМНАЯ ТЕМА: убираем светлую “рамку статуса” у карточек */
+
+.App.dark .technology-card.status-not-started,
+.App.dark .technology-card.status-in-progress,
+.App.dark .technology-card.status-completed {
+  background-color: #181818;   /* общий тёмный фон */
+  border-color: #333;          /* тёмная рамка вместо белой */
+}
+
+/* внутренний слой, который тоже красится через эти классы */
+.App.dark .technology-card.status-not-started > div,
+.App.dark .technology-card.status-in-progress > div,
+.App.dark .technology-card.status-completed > div {
+  background-color: #181818;
+  border-color: #333;
+  color: #f5f5f5;
+}
+/* ===== АДСКО ЧЕРНАЯ КАРТОЧКА В ТЁМНОЙ ТЕМЕ ===== */
+
+.App.dark .technology-card,
+.App.dark .technology-card * {
+  background-color: #000 !important;
+  color: #f5f5f5 !important;
+  border-color: #000 !important;
+}
+
+/* Оставляем цветными только бейджи направления и статус */
+.App.dark .technology-card .category-badge,
+.App.dark .technology-card .status-badge {
+  background-color: inherit !important; /* их цвет уже задан отдельно */
+  color: #000 !important;               /* чтобы текст на цветной плашке был тёмным */
+}
+
+/* Кнопки снизу можешь тоже сделать тёмными, если надо */
+.App.dark .technology-card button {
+  background-color: #111 !important;
+  border-color: #222 !important;
+  color: #f5f5f5 !important;
+}
+/* фон вокруг карточек в тёмной теме */
+.App.dark .technology-list,
+.App.dark .technology-list *::before,
+.App.dark .technology-list *::after {
+  background-color: #000 !important;
+}
+/* Тёмная тема: одна и та же чёрная “полка” и левая граница для всех статусов */
+
+.App.dark .technology-card.status-completed,
+.App.dark .technology-card.status-in-progress,
+.App.dark .technology-card.status-not-started {
+  background: #000 !important;          /* вместо светлого градиента */
+  border-left-color: #000 !important;   /* убираем цветную/белую обводку слева */
+}
